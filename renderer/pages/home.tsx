@@ -1,5 +1,11 @@
+import Link from "next/link";
+
 const home = () => {
-  return <div>home2222222222</div>;
+  return (
+    <div>
+      <Link href="/login">로그인</Link>
+    </div>
+  );
 };
 
 export default home;

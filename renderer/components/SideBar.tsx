@@ -1,12 +1,11 @@
 const SideBar = () => {
   return (
     <>
-      <div className="container">asdf</div>
+      <div className="container"></div>
       <style jsx>{`
         .container {
-          width: 250px;
           height: 100vh;
-          background-color: #1565c0;
+          background-color: #e9ebec;
         }
       `}</style>
     </>
