@@ -1,3 +1,4 @@
+import { useRouter } from "next/router.js";
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
 import {
   onAuthStateChanged,
@@ -36,8 +37,10 @@ const AuthContext = createContext<AuthContextItems | null>(null);
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const { push } = useRouter();
   console.log("currentUser", auth.currentUser);
   console.log("user context", user);
+
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (_user) => {
       const { uid, email, displayName } = _user || {};
@@ -48,9 +51,16 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
       }
       setIsLoading(false);
     });
-
     return () => unsubscribe();
   }, []);
+
+  useEffect(() => {
+    if (user) {
+      push("/users");
+      return;
+    }
+    push("/login");
+  }, [user]);
 
   const register = (email: string, password: string) => {
     return createUserWithEmailAndPassword(auth, email, password);

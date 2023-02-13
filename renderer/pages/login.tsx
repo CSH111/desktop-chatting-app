@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { AuthContainter, LoginForm } from "../components";
 
 const Login = () => {
