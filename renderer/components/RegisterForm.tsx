@@ -21,14 +21,12 @@ const RegisterFrom = () => {
   } = useForm<FormValues>({ mode: "onChange" });
   const { user, register: signUp } = useAuth();
 
-  const onSubmit: SubmitHandler<FormValues> = async (data) => {
-    const { email, password, name } = data;
-    try {
-      await signUp(email, password);
-    } catch (err) {
-      console.log(err);
-    }
-    console.log(data);
+  const onSubmit: SubmitHandler<FormValues> = async (formData) => {
+    const { email, password, name: displayName } = formData;
+
+    signUp(email, password, displayName);
+
+    console.log(formData);
     console.log(errors);
   };
 

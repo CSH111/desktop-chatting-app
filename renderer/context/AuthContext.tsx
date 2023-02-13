@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
   signOut,
   UserCredential,
+  updateProfile,
 } from "../../node_modules/@firebase/auth/dist/esm2017/index.js";
 // import {
 //   onAuthStateChanged,
@@ -21,15 +22,17 @@ type User = {
   email: string;
   displayName: string;
 };
-type Register = (email: string, password: string) => Promise<UserCredential>;
-type Login = (email: string, password: string) => Promise<UserCredential>;
-type Logout = () => void;
+
+// type RegisterFn = (email: string, password: string, displayName: string) => Promise<UserCredential>;
+type RegisterFn = (email: string, password: string, displayName: string) => void;
+type LoginFn = (email: string, password: string) => Promise<UserCredential>;
+type LogoutFn = () => void;
 
 interface AuthContextItems {
   user: User;
-  register: Register;
-  login: Login;
-  logout: Logout;
+  register: RegisterFn;
+  login: LoginFn;
+  logout: LogoutFn;
 }
 
 const AuthContext = createContext<AuthContextItems | null>(null);
@@ -38,8 +41,8 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User>(null);
   const [isLoading, setIsLoading] = useState(true);
   const { push } = useRouter();
-  console.log("currentUser", auth.currentUser);
-  console.log("user context", user);
+  // console.log("currentUser", auth.currentUser);
+  // console.log("user context", user);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (_user) => {
@@ -62,8 +65,14 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     push("/login");
   }, [user]);
 
-  const register = (email: string, password: string) => {
-    return createUserWithEmailAndPassword(auth, email, password);
+  const register: RegisterFn = async (email, password, displayName) => {
+    try {
+      const { user } = await createUserWithEmailAndPassword(auth, email, password);
+      await updateProfile(user, { displayName });
+      setUser((_user) => ({ ..._user, displayName }));
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const login = (email: string, password: string) => {
