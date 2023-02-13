@@ -33,6 +33,7 @@ interface AuthContextItems {
   register: RegisterFn;
   login: LoginFn;
   logout: LogoutFn;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextItems | null>(null);
@@ -58,12 +59,13 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   useEffect(() => {
+    if (isLoading) return;
     if (user) {
       push("/users");
       return;
     }
     push("/login");
-  }, [user]);
+  }, [isLoading, user]);
 
   const register: RegisterFn = async (email, password, displayName) => {
     try {
@@ -84,7 +86,7 @@ export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, register, login, logout }}>
+    <AuthContext.Provider value={{ user, register, login, logout, isLoading }}>
       {isLoading ? <p>Auth loading...</p> : children}
     </AuthContext.Provider>
   );
