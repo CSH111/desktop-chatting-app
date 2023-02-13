@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useAuth } from "../context/AuthContext";
 import AuthButton from "./AuthButton";
 import AuthInput from "./AuthInput";
 
@@ -10,7 +11,15 @@ type FormValues = {
 
 const LoginForm = () => {
   const { register, handleSubmit, setFocus } = useForm<FormValues>();
-  const onSubmit: SubmitHandler<FormValues> = (data) => console.log(data);
+  const { login } = useAuth();
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    const { email, password } = data;
+    try {
+      await login(email, password);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   useEffect(() => {
     setFocus("email");

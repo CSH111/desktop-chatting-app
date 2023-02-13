@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
+import { useAuth } from "../context/AuthContext";
 import AuthButton from "./AuthButton";
 import AuthInput from "./AuthInput";
 
@@ -18,12 +19,18 @@ const RegisterFrom = () => {
     formState: { errors },
     watch,
   } = useForm<FormValues>({ mode: "onChange" });
-  const onSubmit: SubmitHandler<FormValues> = (data) => {
+  const { user, register: signUp } = useAuth();
+
+  const onSubmit: SubmitHandler<FormValues> = async (data) => {
+    const { email, password, name } = data;
+    try {
+      await signUp(email, password);
+    } catch (err) {
+      console.log(err);
+    }
     console.log(data);
     console.log(errors);
   };
-
-  console.log("에러", errors);
 
   return (
     <>
@@ -35,7 +42,7 @@ const RegisterFrom = () => {
             {...register("email", {
               required: "이메일을 입력하세요",
               pattern: {
-                value: /^[a-zA-Z0-9]+@[a-zA-Z0-9]+$/,
+                value: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/,
                 message: "올바른 형식의 이메일을 입력하세요",
               },
             })}

@@ -1,8 +1,11 @@
-import Link from "next/link";
 import { AuthContainter } from "../components";
 import RegisterForm from "../components/RegisterForm";
+import { useAuth } from "../context/AuthContext";
 
 const Register = () => {
+  // console.log(user)
+  // const
+
   return (
     <>
       <AuthContainter title="회원가입" link={{ to: "/login", text: "go to login" }}>
